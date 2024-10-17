@@ -55,4 +55,23 @@ public class GraphParserTest {
         assertEquals(expectedOutput.trim(), actualOutput.trim());
 
     }
+
+    // Feature 2: Test adding a node and a list of nodes
+    @Test
+    public void testAddNode() {
+        DefaultDirectedGraph<String, DefaultEdge> graph = parser.parseGraph("src/test/resources/graph.dot");
+        parser.addNode("E");
+        assertTrue(graph.containsVertex("E"));
+    }
+
+
+    @Test
+    public void testAddNodes() {
+        DefaultDirectedGraph<String, DefaultEdge> graph = parser.parseGraph("src/test/resources/graph.dot");
+        parser.addNodes(new String[]{"F", "G", "H"});
+        assertTrue(graph.containsVertex("F"));
+        assertTrue(graph.containsVertex("G"));
+        assertTrue(graph.containsVertex("H"));
+    }
+
 }

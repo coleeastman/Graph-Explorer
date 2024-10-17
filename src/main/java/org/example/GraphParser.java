@@ -24,8 +24,13 @@ public class GraphParser {
         // Feature 1: Convert to String demonstration
         System.out.println(parser.toString());
 
+        // Feature 2: Add Node(s) demonstration
+        parser.addNode("E");
+        parser.addNodes(new String[]{"F", "G", "H"});
+
         // Feature 1: Output DOT file demonstration
         parser.outputGraph("src/main/resources/output.dot");
+
     }
 
     // Feature 1: Parse the DOT file and create a directed graph
@@ -108,5 +113,23 @@ public class GraphParser {
 
         }
     }
+
+    // Feature 2: Add Node(s)
+    public void addNode(String label) {
+        if (!graph.containsVertex(label)) {
+            graph.addVertex(label);
+            System.out.println("Node added: " + label);
+        } else {
+            System.out.println("Node already exists: " + label);
+        }
+    }
+
+
+    public void addNodes(String[] labels) {
+        for (String label : labels) {
+            addNode(label);
+        }
+    }
+
 
 }
