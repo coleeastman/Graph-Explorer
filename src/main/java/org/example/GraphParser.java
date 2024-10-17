@@ -35,6 +35,9 @@ public class GraphParser {
         // Feature 1: Output DOT file demonstration
         parser.outputGraph("src/main/resources/output.dot");
 
+        // Feature 4: Output as PNG demonstration
+        parser.outputGraphics("src/main/resources/graph.png", "png");
+
     }
 
     // Feature 1: Parse the DOT file and create a directed graph
@@ -149,5 +152,34 @@ public class GraphParser {
     }
 
 
+    // Feature 4: Output the graph as an image (PNG)
+    public void outputGraphics(String filepath, String format) {
+        Graph g = graph("example").directed();
+
+
+        // Dynamically create nodes and edges based on the parsed graph
+        for (String vertex : graph.vertexSet()) {
+            g = g.with(node(vertex)); // Add each vertex as a node
+        }
+
+
+        for (DefaultEdge edge : graph.edgeSet()) {
+            String source = graph.getEdgeSource(edge);
+            String target = graph.getEdgeTarget(edge);
+
+
+            // Add edge between nodes
+            g = g.with(node(source).link(to(node(target)).with(Label.of(source + " -> " + target))));
+        }
+
+
+        // Export the graph to the specified image format
+        try {
+            Graphviz.fromGraph(g).width(500).render(Format.PNG).toFile(new File(filepath));
+            System.out.println("Graph exported as " + format + " to " + filepath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

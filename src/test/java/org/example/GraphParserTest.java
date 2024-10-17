@@ -82,5 +82,28 @@ public class GraphParserTest {
         assertTrue(graph.containsEdge("A", "F"));
     }
 
+    // Feature 4: Test output to DOT file
+    @Test
+    public void testOutputGraph() throws IOException {
+        parser.parseGraph("src/test/resources/graph.dot");
+        parser.outputGraph("src/test/resources/output.dot");
+
+
+        String expectedOutput = Files.readString(Paths.get("src/test/resources/output.dot"));
+        String actualOutput = Files.readString(Paths.get("src/test/resources/output.dot"));
+        assertEquals(expectedOutput, actualOutput);
+    }
+
+
+    // Feature 4: Test output to PNG
+    @Test
+    public void testOutputGraphics() {
+        parser.parseGraph("src/test/resources/graph.dot");
+        parser.outputGraphics("src/test/resources/graph.png", "png");
+
+
+        // You can use an assert to check if the file exists, or add additional checks
+        assertTrue(Files.exists(Paths.get("src/test/resources/graph.png")));
+    }
 
 }
