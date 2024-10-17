@@ -11,4 +11,6 @@ digraph G {
   B -> C;
   C -> A;
   D -> E;
+  A -> F;
+  F -> G;
 }

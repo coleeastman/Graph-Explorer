@@ -28,6 +28,10 @@ public class GraphParser {
         parser.addNode("E");
         parser.addNodes(new String[]{"F", "G", "H"});
 
+        // Feature 3: Add Edge demonstration
+        parser.addEdge("A", "F");
+        parser.addEdge("F", "G");
+
         // Feature 1: Output DOT file demonstration
         parser.outputGraph("src/main/resources/output.dot");
 
@@ -130,6 +134,20 @@ public class GraphParser {
             addNode(label);
         }
     }
+
+
+    // Feature 3: Add Edge(s)
+    public void addEdge(String srcLabel, String dstLabel) {
+        if (!graph.containsEdge(srcLabel, dstLabel)) {
+            graph.addVertex(srcLabel);  // Ensure the vertices exist
+            graph.addVertex(dstLabel);
+            graph.addEdge(srcLabel, dstLabel);
+            System.out.println("Edge added: " + srcLabel + " -> " + dstLabel);
+        } else {
+            System.out.println("Edge already exists: " + srcLabel + " -> " + dstLabel);
+        }
+    }
+
 
 
 }

@@ -74,4 +74,13 @@ public class GraphParserTest {
         assertTrue(graph.containsVertex("H"));
     }
 
+    // Feature 3: Test adding an edge
+    @Test
+    public void testAddEdge() {
+        DefaultDirectedGraph<String, DefaultEdge> graph = parser.parseGraph("src/test/resources/graph.dot");
+        parser.addEdge("A", "F");
+        assertTrue(graph.containsEdge("A", "F"));
+    }
+
+
 }
