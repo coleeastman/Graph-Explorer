@@ -15,6 +15,12 @@ public class GraphParser {
 
     private DefaultDirectedGraph<String, DefaultEdge> graph;
 
+    // Enum to specify the algorithm type (BFS or DFS)
+    public enum Algorithm {
+        BFS,
+        DFS
+    }
+
     // Main method demonstrating graph operations
     public static void main(String[] args) {
 
@@ -49,9 +55,18 @@ public class GraphParser {
         parser.removeEdge("A", "B");  // Example edge
         System.out.println(parser.toString());
 
-        // Part 3 Feature 1: BFS Search demonstration
-        System.out.println("Searching path between A and E:");
-        Path path = parser.graphSearch("A", "E");
+        // Part 3 Feature 1: Graph Search (BFS/DFS) demonstration
+        System.out.println("Searching path between A and E using BFS:");
+        Path path = parser.graphSearch("A", "E", Algorithm.BFS);  // Use BFS
+        if (path != null) {
+            System.out.println("Path found: " + path);
+        } else {
+            System.out.println("No path found.");
+        }
+
+        // Demonstrating DFS search
+        System.out.println("Searching path between A and E using DFS:");
+        path = parser.graphSearch("A", "E", Algorithm.DFS);  // Use DFS
         if (path != null) {
             System.out.println("Path found: " + path);
         } else {
@@ -189,14 +204,26 @@ public class GraphParser {
         }
     }
 
-    // Part 3: Graph Search (BFS)
-    public Path graphSearch(String src, String dst) {
+    // Part 3: Graph Search (BFS or DFS based on enum)
+    public Path graphSearch(String src, String dst, Algorithm algo) {
         if (src.equals(dst)) {
             Path path = new Path();
             path.addNode(src);
             return path;
         }
 
+        switch (algo) {
+            case BFS:
+                return bfsSearch(src, dst);  // Call BFS search method
+            case DFS:
+                return dfsSearch(src, dst);  // Call DFS search method
+            default:
+                throw new IllegalArgumentException("Unknown algorithm: " + algo);
+        }
+    }
+
+    // BFS Search implementation
+    private Path bfsSearch(String src, String dst) {
         Queue<String> queue = new LinkedList<>();
         Map<String, String> parentMap = new HashMap<>();
         Set<String> visited = new HashSet<>();
@@ -211,6 +238,34 @@ public class GraphParser {
                 String neighbor = graph.getEdgeTarget(edge);
                 if (!visited.contains(neighbor)) {
                     queue.add(neighbor);
+                    visited.add(neighbor);
+                    parentMap.put(neighbor, current);
+
+                    if (neighbor.equals(dst)) {
+                        return buildPath(src, dst, parentMap);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    // DFS Search implementation
+    private Path dfsSearch(String src, String dst) {
+        Stack<String> stack = new Stack<>();
+        Map<String, String> parentMap = new HashMap<>();
+        Set<String> visited = new HashSet<>();
+
+        stack.push(src);
+        visited.add(src);
+
+        while (!stack.isEmpty()) {
+            String current = stack.pop();
+
+            for (DefaultEdge edge : graph.edgesOf(current)) {
+                String neighbor = graph.getEdgeTarget(edge);
+                if (!visited.contains(neighbor)) {
+                    stack.push(neighbor);
                     visited.add(neighbor);
                     parentMap.put(neighbor, current);
 
