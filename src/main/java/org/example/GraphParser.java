@@ -1,94 +1,70 @@
 package org.example;
 
-
 import guru.nidi.graphviz.attribute.*;
 import guru.nidi.graphviz.engine.*;
 import guru.nidi.graphviz.model.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import java.io.*;
-
+import java.util.*;
 
 import static guru.nidi.graphviz.model.Factory.*;
 
-
+// GraphParser class to manage graph operations
 public class GraphParser {
-
-
-
 
     private DefaultDirectedGraph<String, DefaultEdge> graph;
 
-
-    // Main
+    // Main method demonstrating graph operations
     public static void main(String[] args) {
 
-
-        // Part 1 Feature 1: Graph Parser demonstration
         GraphParser parser = new GraphParser();
         DefaultDirectedGraph<String, DefaultEdge> graph = parser.parseGraph("src/main/resources/graph.dot");
 
-
-        // Part 1 Feature 1: Convert to String demonstration
+        // Part 1 Feature 1: Print graph demonstration
         System.out.println(parser.toString());
 
-
-        // Part 1 Feature 2: Add Node(s) demonstration
+        // Part 1 Feature 2: Add nodes and edges demonstration
         parser.addNode("E");
         parser.addNodes(new String[]{"F", "G", "H"});
-
-
-        // Part 1 Feature 3: Add Edge demonstration
         parser.addEdge("A", "F");
         parser.addEdge("F", "G");
 
-
-        // Part 1 Feature 1: Output DOT file demonstration
+        // Part 1 Feature 3: Output graph as DOT and PNG
         parser.outputGraph("src/main/resources/output.dot");
-
-
-        // Part 1 Feature 4: Output as PNG demonstration
         parser.outputGraphics("src/main/resources/graph.png", "png");
 
-
-        // Part 2 Feature 1: Demonstrate removing a single node
+        // Part 2 Feature 1: Demonstrate node removal
         System.out.println("Demonstrating node removal:");
         parser.removeNode("E");
         System.out.println(parser.toString());
 
-
-        // Part 2 Feature 2: Demonstrate removing multiple nodes
+        // Part 2 Feature 2: Demonstrate multiple node removal
         System.out.println("Demonstrating multiple node removal:");
         parser.removeNodes(new String[]{"F", "G"});
         System.out.println(parser.toString());
 
-
-        // Part 2 Feature 3: Demonstrate removing an edge
+        // Part 2 Feature 3: Demonstrate edge removal
         System.out.println("Demonstrating edge removal:");
-        parser.removeEdge("A", "B");  // Replace with any valid edge present in your graph
+        parser.removeEdge("A", "B");  // Example edge
         System.out.println(parser.toString());
 
-
+        // Part 3 Feature 1: DFS Search demonstration
+        System.out.println("Searching path between A and E:");
+        Path path = parser.graphSearch("A", "E");
+        if (path != null) {
+            System.out.println("Path found: " + path);
+        } else {
+            System.out.println("No path found.");
+        }
     }
 
-
     // Part 1 Feature 1: Parse the DOT file and create a directed graph
-
-
     public DefaultDirectedGraph<String, DefaultEdge> parseGraph(String filepath) {
-
-
         graph = new DefaultDirectedGraph<>(DefaultEdge.class);
-
-
         try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
-
-
             String line;
-
-
             while ((line = br.readLine()) != null) {
-                // Parsing logic
                 if (line.contains("->")) {
                     String[] parts = line.split("->");
                     String source = parts[0].trim();
@@ -99,85 +75,46 @@ public class GraphParser {
                 }
             }
         } catch (IOException e) {
-
-
             e.printStackTrace();
-
-
         }
-
-
         return graph;
     }
 
-
     @Override
     public String toString() {
-
-
         StringBuilder sb = new StringBuilder();
         sb.append("Graph:\n");
-
-
-        // vertices
         sb.append("Nodes: ");
         for (String vertex : graph.vertexSet()) {
             sb.append(vertex).append(" ");
         }
-
-
-        // edges
         sb.append("\nEdges:\n");
         for (DefaultEdge edge : graph.edgeSet()) {
             String source = graph.getEdgeSource(edge);
             String target = graph.getEdgeTarget(edge);
             sb.append(source).append(" -> ").append(target).append("\n");
         }
-
-
         return sb.toString();
-
-
     }
 
-
     public void outputGraph(String filepath) {
-
-
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
-
-
             writer.write("digraph G {\n");
-
-
-            // vertices
             for (String vertex : graph.vertexSet()) {
                 writer.write("  " + vertex + ";\n");
             }
-
-
-            // edges
             for (DefaultEdge edge : graph.edgeSet()) {
                 String source = graph.getEdgeSource(edge);
                 String target = graph.getEdgeTarget(edge);
                 writer.write("  " + source + " -> " + target + ";\n");
             }
-
-
             writer.write("}");
-
-
         } catch (IOException e) {
-
-
             e.printStackTrace();
-
-
         }
     }
 
-
-    // Part 1 Feature 2: Add Node(s)
+    // Part 1 Feature 2: Add a single node
     public void addNode(String label) {
         if (!graph.containsVertex(label)) {
             graph.addVertex(label);
@@ -187,22 +124,17 @@ public class GraphParser {
         }
     }
 
-
-
-
+    // Part 1 Feature 2: Add multiple nodes
     public void addNodes(String[] labels) {
         for (String label : labels) {
             addNode(label);
         }
     }
 
-
-
-
-    // Part 1 Feature 3: Add Edge(s)
+    // Part 1 Feature 3: Add an edge between nodes
     public void addEdge(String srcLabel, String dstLabel) {
         if (!graph.containsEdge(srcLabel, dstLabel)) {
-            graph.addVertex(srcLabel);  // Ensure the vertices exist
+            graph.addVertex(srcLabel);
             graph.addVertex(dstLabel);
             graph.addEdge(srcLabel, dstLabel);
             System.out.println("Edge added: " + srcLabel + " -> " + dstLabel);
@@ -211,39 +143,17 @@ public class GraphParser {
         }
     }
 
-
-
-
-    // Part 1 Feature 4: Output the graph as an image (PNG)
+    // Part 1 Feature 4: Output the graph as a PNG image
     public void outputGraphics(String filepath, String format) {
         Graph g = graph("example").directed();
-
-
-
-
-        // Dynamically create nodes and edges based on the parsed graph
         for (String vertex : graph.vertexSet()) {
-            g = g.with(node(vertex)); // Add each vertex as a node
+            g = g.with(node(vertex));
         }
-
-
-
-
         for (DefaultEdge edge : graph.edgeSet()) {
             String source = graph.getEdgeSource(edge);
             String target = graph.getEdgeTarget(edge);
-
-
-
-
-            // Add edge between nodes
             g = g.with(node(source).link(to(node(target)).with(Label.of(source + " -> " + target))));
         }
-
-
-
-
-        // Export the graph to the specified image format
         try {
             Graphviz.fromGraph(g).width(500).render(Format.PNG).toFile(new File(filepath));
             System.out.println("Graph exported as " + format + " to " + filepath);
@@ -251,7 +161,6 @@ public class GraphParser {
             e.printStackTrace();
         }
     }
-
 
     // Part 2: Remove a node by its label
     public void removeNode(String label) {
@@ -263,14 +172,12 @@ public class GraphParser {
         }
     }
 
-
     // Part 2: Remove multiple nodes by their labels
     public void removeNodes(String[] labels) {
         for (String label : labels) {
             removeNode(label);
         }
     }
-
 
     // Part 2: Remove an edge between two nodes
     public void removeEdge(String srcLabel, String dstLabel) {
@@ -282,5 +189,67 @@ public class GraphParser {
         }
     }
 
+    // Part 3: Graph Search (DFS)
+    public Path graphSearch(String src, String dst) {
+        if (src.equals(dst)) {
+            Path path = new Path();
+            path.addNode(src);
+            return path;
+        }
 
+        Stack<String> stack = new Stack<>();
+        Map<String, String> parentMap = new HashMap<>();
+        Set<String> visited = new HashSet<>();
+
+        stack.push(src);
+        visited.add(src);
+
+        while (!stack.isEmpty()) {
+            String current = stack.pop();
+
+            for (DefaultEdge edge : graph.edgesOf(current)) {
+                String neighbor = graph.getEdgeTarget(edge);
+                if (!visited.contains(neighbor)) {
+                    stack.push(neighbor);
+                    visited.add(neighbor);
+                    parentMap.put(neighbor, current);
+
+                    if (neighbor.equals(dst)) {
+                        return buildPath(src, dst, parentMap);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    // Helper method to build the path from source to destination
+    private Path buildPath(String src, String dst, Map<String, String> parentMap) {
+        Path path = new Path();
+        String current = dst;
+        while (current != null) {
+            path.addNode(current);
+            current = parentMap.get(current);
+        }
+        Collections.reverse(path.getNodes());
+        return path;
+    }
+
+    // Part 3: Path class to represent a path from src to dst
+    public class Path {
+        private List<String> nodes = new ArrayList<>();
+
+        public void addNode(String node) {
+            nodes.add(node);
+        }
+
+        public List<String> getNodes() {
+            return nodes;
+        }
+
+        @Override
+        public String toString() {
+            return String.join(" -> ", nodes);
+        }
+    }
 }
