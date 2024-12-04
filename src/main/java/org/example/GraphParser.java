@@ -15,6 +15,13 @@ public class GraphParser {
 
     private DefaultDirectedGraph<String, DefaultEdge> graph;
 
+    // Refactor 3: constants for frequently used paths
+
+    private static final String GRAPH_DOT_PATH = "src/main/resources/graph.dot";
+    private static final String GRAPH_OUTPUT_PATH = "src/main/resources/output.dot";
+    private static final String GRAPH_PNG_PATH = "src/main/resources/graph.png";
+
+
     // Enum to specify the algorithm type (BFS or DFS)
     public enum Algorithm {
         BFS,
@@ -25,7 +32,7 @@ public class GraphParser {
     public static void main(String[] args) {
 
         GraphParser parser = new GraphParser();
-        DefaultDirectedGraph<String, DefaultEdge> graph = parser.parseGraph("src/main/resources/graph.dot");
+        DefaultDirectedGraph<String, DefaultEdge> graph = parser.parseGraph(GRAPH_DOT_PATH);
 
         // Part 1 Feature 1: Print graph demonstration
         System.out.println(parser.toString());
@@ -37,8 +44,8 @@ public class GraphParser {
         parser.addEdge("F", "G");
 
         // Part 1 Feature 3: Output graph as DOT and PNG
-        parser.outputGraph("src/main/resources/output.dot");
-        parser.outputGraphics("src/main/resources/graph.png", "png");
+        parser.outputGraph(GRAPH_OUTPUT_PATH);
+        parser.outputGraphics(GRAPH_PNG_PATH, "png");
 
         // Part 2 Feature 1: Demonstrate node removal
         System.out.println("Demonstrating node removal:");
@@ -291,7 +298,7 @@ public class GraphParser {
     }
 
     // Part 3: Path class to represent a path from src to dst
-    public static class Path { // Refactor 2: Made static as it does not depend on an instance of the outer class
+    public static class Path { // Refactor 2: made static so does not depend on an instance of the outer class
         private List<String> nodes = new ArrayList<>();
 
         public void addNode(String node) {
