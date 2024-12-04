@@ -25,7 +25,8 @@ public class GraphParser {
     // Enum to specify the algorithm type (BFS or DFS)
     public enum Algorithm {
         BFS,
-        DFS
+        DFS,
+        RANDOM
     }
 
     // Main method demonstrating graph operations
@@ -38,10 +39,12 @@ public class GraphParser {
         System.out.println(parser.toString());
 
         // Part 1 Feature 2: Add nodes and edges demonstration
+        System.out.println("Demonstrating adding nodes and edges");
         parser.addNode("E");
         parser.addNodes(new String[]{"F", "G", "H"});
         parser.addEdge("A", "F");
         parser.addEdge("F", "G");
+        System.out.println();
 
         // Part 2 Feature 1: Demonstrate node removal
         System.out.println("Demonstrating node removal:");
@@ -59,6 +62,8 @@ public class GraphParser {
         System.out.println(parser.toString());
 
         // Part 3 Feature 1: Graph Search (BFS/DFS) demonstration
+
+        // Demonstrating BFS
         System.out.println("Searching path between A and E using BFS:");
         Path path = parser.graphSearch("B", "C", Algorithm.BFS);  // Use BFS
         if (path != null) {
@@ -66,14 +71,36 @@ public class GraphParser {
         } else {
             System.out.println("No path found.");
         }
+        System.out.println();
 
-        // Demonstrating DFS search
+        // Demonstrating DFS
         System.out.println("Searching path between A and E using DFS:");
         path = parser.graphSearch("B", "C", Algorithm.DFS);  // Use DFS
         if (path != null) {
             System.out.println("Path found: " + path);
         } else {
             System.out.println("No path found.");
+        }
+        System.out.println();
+
+        // Part 4: Random Walk Search Demonstration
+
+        System.out.println("Adding more nodes and edges for demonstration");
+        parser.addNode("E"); // Add nodes and edges for demonstration
+        parser.addNodes(new String[]{"F", "G", "H"});
+        parser.addEdge("A", "F");
+        parser.addEdge("A", "B");
+        parser.addEdge("F", "G");
+        System.out.println();
+
+        System.out.println(parser.toString());
+
+        System.out.println("3 Random Walk Searches from A to G:");
+        for (int i = 0; i < 3; i++) {
+            Path randomPath = parser.graphSearch("A", "G", Algorithm.RANDOM); // Use Random Walk
+            System.out.println("Random path found: " + randomPath);
+            System.out.println();
+
         }
 
         // Part 1 Feature 3: Output graph as DOT and PNG
@@ -226,17 +253,21 @@ public class GraphParser {
 
         switch (algo) {
             case BFS:
-                strategy = new BFSStrategy();
+                strategy = new BFSStrategy(); // Existing BFS strategy
                 break;
             case DFS:
-                strategy = new DFSStrategy();
+                strategy = new DFSStrategy(); // Existing DFS strategy
+                break;
+            case RANDOM:
+                strategy = new RandomWalkStrategy(); // New random walk strategy
                 break;
             default:
                 throw new IllegalArgumentException("Unknown algorithm: " + algo);
         }
 
-        return strategy.search(graph, src, dst);
+        return strategy.search(graph, src, dst); // Pass the graph, src, and dst to the strategy
     }
+
 
 //    Original BFS and DFS
 //

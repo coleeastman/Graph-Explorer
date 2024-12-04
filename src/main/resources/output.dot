@@ -4,6 +4,12 @@ digraph G {
   C;
   D;
   H;
+  E;
+  F;
+  G;
   B -> C;
   C -> A;
+  A -> F;
+  A -> B;
+  F -> G;
 }
