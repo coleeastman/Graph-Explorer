@@ -3,14 +3,7 @@ digraph G {
   B;
   C;
   D;
-  E;
-  F;
-  G;
   H;
-  A -> B;
   B -> C;
   C -> A;
-  D -> E;
-  A -> F;
-  F -> G;
 }
