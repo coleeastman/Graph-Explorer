@@ -220,22 +220,22 @@ public class GraphParser {
         }
     }
 
-    // Part 3: Graph Search (BFS or DFS based on enum), changed due to template pattern
-    public GraphParser.Path graphSearch(String src, String dst, Algorithm algo) {
-        GraphSearchTemplate searchAlgorithm;
+    // Part 3: Graph Search (BFS or DFS based on enum), changed due to template pattern and again due to search strategy
+    public Path graphSearch(String src, String dst, Algorithm algo) {
+        GraphSearchStrategy strategy;
 
         switch (algo) {
             case BFS:
-                searchAlgorithm = new BFSAlgorithm(graph);
+                strategy = new BFSStrategy();
                 break;
             case DFS:
-                searchAlgorithm = new DFSAlgorithm(graph);
+                strategy = new DFSStrategy();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown algorithm: " + algo);
         }
 
-        return searchAlgorithm.search(src, dst);
+        return strategy.search(graph, src, dst);
     }
 
 //    Original BFS and DFS
