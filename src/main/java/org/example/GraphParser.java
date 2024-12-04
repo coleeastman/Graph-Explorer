@@ -43,10 +43,6 @@ public class GraphParser {
         parser.addEdge("A", "F");
         parser.addEdge("F", "G");
 
-        // Part 1 Feature 3: Output graph as DOT and PNG
-        parser.outputGraph(GRAPH_OUTPUT_PATH);
-        parser.outputGraphics(GRAPH_PNG_PATH, "png");
-
         // Part 2 Feature 1: Demonstrate node removal
         System.out.println("Demonstrating node removal:");
         parser.removeNode("E");
@@ -79,6 +75,11 @@ public class GraphParser {
         } else {
             System.out.println("No path found.");
         }
+
+        // Part 1 Feature 3: Output graph as DOT and PNG
+        // Refactor 5: Relocate graph output and png output as last execution so all functions are reflected
+        parser.outputGraph(GRAPH_OUTPUT_PATH);
+        parser.outputGraphics(GRAPH_PNG_PATH, "png");
     }
 
     // Part 1 Feature 1: Parse the DOT file and create a directed graph
