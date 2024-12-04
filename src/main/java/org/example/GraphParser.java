@@ -291,7 +291,7 @@ public class GraphParser {
     }
 
     // Part 3: Path class to represent a path from src to dst
-    public class Path {
+    public static class Path { // Refactor 2: Made static as it does not depend on an instance of the outer class
         private List<String> nodes = new ArrayList<>();
 
         public void addNode(String node) {
