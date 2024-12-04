@@ -87,6 +87,14 @@ public class GraphParser {
         try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
             String line;
             while ((line = br.readLine()) != null) {
+                line = line.trim(); // Remove leading and trailing whitespace
+
+                // Refactor 4: Handle standalone nodes
+                if (line.endsWith(";") && !line.contains("->")) {
+                    String node = line.replace(";", "").trim();
+                    graph.addVertex(node);
+                }
+
                 if (line.contains("->")) {
                     String[] parts = line.split("->");
                     String source = parts[0].trim();
