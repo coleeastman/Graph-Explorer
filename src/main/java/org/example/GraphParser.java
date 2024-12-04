@@ -57,7 +57,7 @@ public class GraphParser {
 
         // Part 3 Feature 1: Graph Search (BFS/DFS) demonstration
         System.out.println("Searching path between A and E using BFS:");
-        Path path = parser.graphSearch("A", "E", Algorithm.BFS);  // Use BFS
+        Path path = parser.graphSearch("B", "C", Algorithm.BFS);  // Use BFS
         if (path != null) {
             System.out.println("Path found: " + path);
         } else {
@@ -66,7 +66,7 @@ public class GraphParser {
 
         // Demonstrating DFS search
         System.out.println("Searching path between A and E using DFS:");
-        path = parser.graphSearch("A", "E", Algorithm.DFS);  // Use DFS
+        path = parser.graphSearch("B", "C", Algorithm.DFS);  // Use DFS
         if (path != null) {
             System.out.println("Path found: " + path);
         } else {
@@ -147,14 +147,14 @@ public class GraphParser {
     }
 
     // Part 1 Feature 3: Add an edge between nodes
-    public void addEdge(String srcLabel, String dstLabel) {
-        if (!graph.containsEdge(srcLabel, dstLabel)) {
-            graph.addVertex(srcLabel);
-            graph.addVertex(dstLabel);
-            graph.addEdge(srcLabel, dstLabel);
-            System.out.println("Edge added: " + srcLabel + " -> " + dstLabel);
+    public void addEdge(String sourceLabel, String destinationLabel) { // Refactor 1: made variable names more specific
+        if (!graph.containsEdge(sourceLabel, destinationLabel)) {
+            graph.addVertex(sourceLabel);
+            graph.addVertex(destinationLabel);
+            graph.addEdge(sourceLabel, destinationLabel);
+            System.out.println("Edge added: " + sourceLabel + " -> " + destinationLabel);
         } else {
-            System.out.println("Edge already exists: " + srcLabel + " -> " + dstLabel);
+            System.out.println("Edge already exists: " + sourceLabel + " -> " + destinationLabel);
         }
     }
 
