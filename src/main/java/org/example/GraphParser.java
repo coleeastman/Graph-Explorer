@@ -199,7 +199,7 @@ public class GraphParser {
             graph.removeVertex(label);
             System.out.println("Node removed: " + label);
         } else {
-            System.out.println("Node not found: " + label);
+            throw new IllegalArgumentException("Node not found: " + label);
         }
     }
 
@@ -216,7 +216,7 @@ public class GraphParser {
             graph.removeEdge(sourceLabel, destinationLabel);
             System.out.println("Edge removed: " + sourceLabel + " -> " + destinationLabel);
         } else {
-            System.out.println("Edge not found: " + sourceLabel + " -> " + destinationLabel);
+            throw new IllegalArgumentException("Edge not found: " + sourceLabel + " -> " + destinationLabel);
         }
     }
 
