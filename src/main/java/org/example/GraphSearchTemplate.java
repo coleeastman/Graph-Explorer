@@ -1,5 +1,3 @@
-// NO LONGER NEEDED AFTER STRATEGY IMPLEMENTATION
-
 package org.example;
 
 import java.util.*;
@@ -7,6 +5,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 public abstract class GraphSearchTemplate {
+
     protected DefaultDirectedGraph<String, DefaultEdge> graph;
     protected Map<String, String> parentMap;
     protected Set<String> visited;
@@ -18,6 +17,7 @@ public abstract class GraphSearchTemplate {
     }
 
     public GraphParser.Path search(String src, String dst) {
+
         initializeStructure(src);
         visited.add(src);
 
@@ -46,6 +46,7 @@ public abstract class GraphSearchTemplate {
     protected abstract boolean isStructureEmpty();
 
     protected GraphParser.Path buildPath(String src, String dst) {
+
         GraphParser.Path path = new GraphParser.Path();
         String current = dst;
 
@@ -56,5 +57,6 @@ public abstract class GraphSearchTemplate {
 
         Collections.reverse(path.getNodes());
         return path;
+
     }
 }

@@ -1,5 +1,3 @@
-// NO LONGER NEEDED AFTER STRATEGY IMPLEMENTATION
-
 package org.example;
 
 import java.util.*;
@@ -7,6 +5,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 public class DFSAlgorithm extends GraphSearchTemplate {
+
     private Stack<String> stack;
 
     public DFSAlgorithm(DefaultDirectedGraph<String, DefaultEdge> graph) {
@@ -33,4 +32,5 @@ public class DFSAlgorithm extends GraphSearchTemplate {
     protected boolean isStructureEmpty() {
         return stack.isEmpty();
     }
+
 }

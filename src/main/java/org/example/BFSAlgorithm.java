@@ -1,5 +1,3 @@
-// NO LONGER NEEDED AFTER STRATEGY IMPLEMENTATION
-
 package org.example;
 
 import java.util.*;
@@ -7,6 +5,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 public class BFSAlgorithm extends GraphSearchTemplate {
+
     private Queue<String> queue;
 
     public BFSAlgorithm(DefaultDirectedGraph<String, DefaultEdge> graph) {
