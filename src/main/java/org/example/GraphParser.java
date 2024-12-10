@@ -15,30 +15,36 @@ public class GraphParser {
 
     private DefaultDirectedGraph<String, DefaultEdge> graph;
 
+    // Refactor 3: constants for frequently used paths
+
+    private static final String GRAPH_DOT_PATH = "src/main/resources/graph.dot";
+    private static final String GRAPH_OUTPUT_PATH = "src/main/resources/output.dot";
+    private static final String GRAPH_PNG_PATH = "src/main/resources/graph.png";
+
+
     // Enum to specify the algorithm type (BFS or DFS)
     public enum Algorithm {
         BFS,
-        DFS
+        DFS,
+        RANDOM
     }
 
     // Main method demonstrating graph operations
     public static void main(String[] args) {
 
         GraphParser parser = new GraphParser();
-        DefaultDirectedGraph<String, DefaultEdge> graph = parser.parseGraph("src/main/resources/graph.dot");
+        DefaultDirectedGraph<String, DefaultEdge> graph = parser.parseGraph(GRAPH_DOT_PATH);
 
         // Part 1 Feature 1: Print graph demonstration
         System.out.println(parser.toString());
 
         // Part 1 Feature 2: Add nodes and edges demonstration
+        System.out.println("Demonstrating adding nodes and edges");
         parser.addNode("E");
         parser.addNodes(new String[]{"F", "G", "H"});
         parser.addEdge("A", "F");
         parser.addEdge("F", "G");
-
-        // Part 1 Feature 3: Output graph as DOT and PNG
-        parser.outputGraph("src/main/resources/output.dot");
-        parser.outputGraphics("src/main/resources/graph.png", "png");
+        System.out.println();
 
         // Part 2 Feature 1: Demonstrate node removal
         System.out.println("Demonstrating node removal:");
@@ -56,22 +62,51 @@ public class GraphParser {
         System.out.println(parser.toString());
 
         // Part 3 Feature 1: Graph Search (BFS/DFS) demonstration
+
+        // Demonstrating BFS
         System.out.println("Searching path between A and E using BFS:");
-        Path path = parser.graphSearch("A", "E", Algorithm.BFS);  // Use BFS
+        Path path = parser.graphSearch("B", "C", Algorithm.BFS);  // Use BFS
         if (path != null) {
             System.out.println("Path found: " + path);
         } else {
             System.out.println("No path found.");
+        }
+        System.out.println();
+
+        // Demonstrating DFS
+        System.out.println("Searching path between A and E using DFS:");
+        path = parser.graphSearch("B", "C", Algorithm.DFS);  // Use DFS
+        if (path != null) {
+            System.out.println("Path found: " + path);
+        } else {
+            System.out.println("No path found.");
+        }
+        System.out.println();
+
+        // Part 4: Random Walk Search Demonstration
+
+        System.out.println("Adding more nodes and edges for demonstration");
+        parser.addNode("E"); // Add nodes and edges for demonstration
+        parser.addNodes(new String[]{"F", "G", "H"});
+        parser.addEdge("A", "F");
+        parser.addEdge("A", "B");
+        parser.addEdge("F", "G");
+        System.out.println();
+
+        System.out.println(parser.toString());
+
+        System.out.println("3 Random Walk Searches from A to G:");
+        for (int i = 0; i < 3; i++) {
+            Path randomPath = parser.graphSearch("A", "G", Algorithm.RANDOM); // Use Random Walk
+            System.out.println("Random path found: " + randomPath);
+            System.out.println();
+
         }
 
-        // Demonstrating DFS search
-        System.out.println("Searching path between A and E using DFS:");
-        path = parser.graphSearch("A", "E", Algorithm.DFS);  // Use DFS
-        if (path != null) {
-            System.out.println("Path found: " + path);
-        } else {
-            System.out.println("No path found.");
-        }
+        // Part 1 Feature 3: Output graph as DOT and PNG
+        // Refactor 5: Relocate graph output and png output as last execution so all functions are reflected
+        parser.outputGraph(GRAPH_OUTPUT_PATH);
+        parser.outputGraphics(GRAPH_PNG_PATH, "png");
     }
 
     // Part 1 Feature 1: Parse the DOT file and create a directed graph
@@ -80,6 +115,14 @@ public class GraphParser {
         try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
             String line;
             while ((line = br.readLine()) != null) {
+                line = line.trim(); // Remove leading and trailing whitespace
+
+                // Refactor 4: Handle standalone nodes
+                if (line.endsWith(";") && !line.contains("->")) {
+                    String node = line.replace(";", "").trim();
+                    graph.addVertex(node);
+                }
+
                 if (line.contains("->")) {
                     String[] parts = line.split("->");
                     String source = parts[0].trim();
@@ -147,14 +190,14 @@ public class GraphParser {
     }
 
     // Part 1 Feature 3: Add an edge between nodes
-    public void addEdge(String srcLabel, String dstLabel) {
-        if (!graph.containsEdge(srcLabel, dstLabel)) {
-            graph.addVertex(srcLabel);
-            graph.addVertex(dstLabel);
-            graph.addEdge(srcLabel, dstLabel);
-            System.out.println("Edge added: " + srcLabel + " -> " + dstLabel);
+    public void addEdge(String sourceLabel, String destinationLabel) { // Refactor 1: made variable names more specific
+        if (!graph.containsEdge(sourceLabel, destinationLabel)) {
+            graph.addVertex(sourceLabel);
+            graph.addVertex(destinationLabel);
+            graph.addEdge(sourceLabel, destinationLabel);
+            System.out.println("Edge added: " + sourceLabel + " -> " + destinationLabel);
         } else {
-            System.out.println("Edge already exists: " + srcLabel + " -> " + dstLabel);
+            System.out.println("Edge already exists: " + sourceLabel + " -> " + destinationLabel);
         }
     }
 
@@ -195,103 +238,117 @@ public class GraphParser {
     }
 
     // Part 2: Remove an edge between two nodes
-    public void removeEdge(String srcLabel, String dstLabel) {
-        if (graph.containsEdge(srcLabel, dstLabel)) {
-            graph.removeEdge(srcLabel, dstLabel);
-            System.out.println("Edge removed: " + srcLabel + " -> " + dstLabel);
+    public void removeEdge(String sourceLabel, String destinationLabel) {
+        if (graph.containsEdge(sourceLabel, destinationLabel)) {
+            graph.removeEdge(sourceLabel, destinationLabel);
+            System.out.println("Edge removed: " + sourceLabel + " -> " + destinationLabel);
         } else {
-            throw new IllegalArgumentException("Edge not found: " + srcLabel + " -> " + dstLabel);
+            throw new IllegalArgumentException("Edge not found: " + sourceLabel + " -> " + destinationLabel);
         }
     }
 
-    // Part 3: Graph Search (BFS or DFS based on enum)
+    // Part 3: Graph Search (BFS or DFS based on enum), changed due to template pattern and again due to search strategy
     public Path graphSearch(String src, String dst, Algorithm algo) {
-        if (src.equals(dst)) {
-            Path path = new Path();
-            path.addNode(src);
-            return path;
-        }
+        GraphSearchStrategy strategy;
 
         switch (algo) {
             case BFS:
-                return bfsSearch(src, dst);  // Call BFS search method
+                strategy = new BFSStrategy(); // Existing BFS strategy
+                break;
             case DFS:
-                return dfsSearch(src, dst);  // Call DFS search method
+                strategy = new DFSStrategy(); // Existing DFS strategy
+                break;
+            case RANDOM:
+                strategy = new RandomWalkStrategy(); // New random walk strategy
+                break;
             default:
                 throw new IllegalArgumentException("Unknown algorithm: " + algo);
         }
+
+        return strategy.search(graph, src, dst); // Pass the graph, src, and dst to the strategy
     }
 
-    // BFS Search implementation
-    private Path bfsSearch(String src, String dst) {
-        Queue<String> queue = new LinkedList<>();
-        Map<String, String> parentMap = new HashMap<>();
-        Set<String> visited = new HashSet<>();
 
-        queue.add(src);
-        visited.add(src);
-
-        while (!queue.isEmpty()) {
-            String current = queue.poll();
-
-            for (DefaultEdge edge : graph.edgesOf(current)) {
-                String neighbor = graph.getEdgeTarget(edge);
-                if (!visited.contains(neighbor)) {
-                    queue.add(neighbor);
-                    visited.add(neighbor);
-                    parentMap.put(neighbor, current);
-
-                    if (neighbor.equals(dst)) {
-                        return buildPath(src, dst, parentMap);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    // DFS Search implementation
-    private Path dfsSearch(String src, String dst) {
-        Stack<String> stack = new Stack<>();
-        Map<String, String> parentMap = new HashMap<>();
-        Set<String> visited = new HashSet<>();
-
-        stack.push(src);
-        visited.add(src);
-
-        while (!stack.isEmpty()) {
-            String current = stack.pop();
-
-            for (DefaultEdge edge : graph.edgesOf(current)) {
-                String neighbor = graph.getEdgeTarget(edge);
-                if (!visited.contains(neighbor)) {
-                    stack.push(neighbor);
-                    visited.add(neighbor);
-                    parentMap.put(neighbor, current);
-
-                    if (neighbor.equals(dst)) {
-                        return buildPath(src, dst, parentMap);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    // Helper method to build the path from source to destination
-    private Path buildPath(String src, String dst, Map<String, String> parentMap) {
-        Path path = new Path();
-        String current = dst;
-        while (current != null) {
-            path.addNode(current);
-            current = parentMap.get(current);
-        }
-        Collections.reverse(path.getNodes());
-        return path;
-    }
+//    Original BFS and DFS
+//
+//    private Path bfsSearch(String src, String dst) {
+//        Queue<String> queue = new LinkedList<>();
+//        Map<String, String> parentMap = new HashMap<>();
+//        Set<String> visited = new HashSet<>();
+//
+//        try {
+//            queue.add(src);
+//            visited.add(src);
+//
+//            while (!queue.isEmpty()) {
+//                String current = queue.poll();
+//
+//                for (DefaultEdge edge : graph.edgesOf(current)) {
+//                    String neighbor = graph.getEdgeTarget(edge);
+//                    if (!visited.contains(neighbor)) {
+//                        queue.add(neighbor);
+//                        visited.add(neighbor);
+//                        parentMap.put(neighbor, current);
+//
+//                        if (neighbor.equals(dst)) {
+//                            return buildPath(src, dst, parentMap);
+//                        }
+//                    }
+//                }
+//            }
+//        } catch (IllegalArgumentException e) {
+//            System.out.println("Error: " + e.getMessage()); // Print the error message
+//        }
+//
+//        return null; // Return null if no path is found
+//    }
+//
+//    private Path dfsSearch(String src, String dst) {
+//        Stack<String> stack = new Stack<>();
+//        Map<String, String> parentMap = new HashMap<>();
+//        Set<String> visited = new HashSet<>();
+//
+//        try {
+//            stack.push(src);
+//            visited.add(src);
+//
+//            while (!stack.isEmpty()) {
+//                String current = stack.pop();
+//
+//                for (DefaultEdge edge : graph.edgesOf(current)) {
+//                    String neighbor = graph.getEdgeTarget(edge);
+//                    if (!visited.contains(neighbor)) {
+//                        stack.push(neighbor);
+//                        visited.add(neighbor);
+//                        parentMap.put(neighbor, current);
+//
+//                        if (neighbor.equals(dst)) {
+//                            return buildPath(src, dst, parentMap);
+//                        }
+//                    }
+//                }
+//            }
+//        } catch (IllegalArgumentException e) {
+//            System.out.println("Error: " + e.getMessage()); // Print the error message
+//        }
+//
+//        return null; // Return null if no path is found
+//    }
+//
+//    // Helper method to build the path from source to destination
+//    private Path buildPath(String src, String dst, Map<String, String> parentMap) {
+//        Path path = new Path();
+//        String current = dst;
+//        while (current != null) {
+//            path.addNode(current);
+//            current = parentMap.get(current);
+//        }
+//        Collections.reverse(path.getNodes());
+//        return path;
+//    }
 
     // Part 3: Path class to represent a path from src to dst
-    public class Path {
+    public static class Path { // Refactor 2: made static so does not depend on an instance of the outer class
         private List<String> nodes = new ArrayList<>();
 
         public void addNode(String node) {
